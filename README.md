@@ -100,14 +100,16 @@ const app = new PWAPlugin({
   // used for cache name, should change on each deployment
   tag: 2
 
-  //mode
+  // must manually match webpack mode
+  // https://github.com/webpack/webpack/issues/6496
   mode: 'development'
 })
 ```
 
 #### Example
 
-[Marker](https://github.com/firien/marker)
+* [Marker](https://github.com/firien/marker)
+* [Sconce](https://github.com/firien/sconce)
 
 ---
 
