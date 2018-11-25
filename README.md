@@ -1,7 +1,10 @@
 A [webpack](https://webpack.js.org) plugin for small [PWA](https://developer.mozilla.org/en-US/docs/Web/Apps/Progressive) that are hosted on GitHub.
 
-Hosted on the `master` branch's `docs/` folder. This is not the default option and will need to be [setup](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/#publishing-your-github-pages-site-from-a-docs-folder-on-your-master-branch) on GitHub.
+This is my first plugin, and could likely be much better. It was written because I had more than a couple PWAs hosted on GitHub and updating each one was a pain.
 
+They are all hosted on the `master` branch's `docs/` folder. This is not the default option and needs to be [setup](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/#publishing-your-github-pages-site-from-a-docs-folder-on-your-master-branch) on GitHub.
+
+Because files have cache-busting fingerprints, it is recommended to use [clean-webpack-plugin](https://github.com/johnagan/clean-webpack-plugin) to clean output directory.
 
 ### Convention over Configuration
 
@@ -9,23 +12,41 @@ Assumes the following directory structure
 
     root
     ┣ stylesheets/
-    ┃ ┣ asdf.scss
-    ┃ ┗ asdf.css
+    ┃ ┣ index.scss
+    ┃ ┗ other.css
     ┣ javascripts/
-    ┃ ┣ asdf.coffee
-    ┃ ┗ asdf.js
+    ┃ ┣ index.coffee
+    ┃ ┗ other.js
     ┣ images/
     ┃ ┣ icon-192.png
     ┃ ┗ icon-512.png
     ┗ views/
        ┗ index.pug
 
+#### Stylesheets
+All sass files will be transpiled to css. All css files with be copied.
 
-All images/icon-*.png will be used as icon listings in `manifest.webmanifest` and as <link rel=apple-touch-icon>
-Will build a
+#### Javascripts
+All coffee files will be transpiled to js. All js files with be copied.
 
-* pwa.js
-* service.js
+#### Images
+All images/icon-*.png will be used as icon listings in `manifest.webmanifest` and as `<link rel=apple-touch-icon>`
+
+#### Views
+All pug files will be rendered to html
+
+##### Helpers
+
+* assetPath
+* iconLinks
+* theme
+* name
+* desc
+
+Plugin will build three files associated with PWA.
+
+* pwa.js - load service worker and handle installation
+* service.js - all files will be cached
 * manifest.webmanifest
 
 `views/index.pug` head tag should look something like this:
@@ -56,6 +77,12 @@ html(lang="en")
 
 Usage
 
+Install from GitHub
+
+    npm install firien/pwa
+
+In webpack.config.js
+
 ```js
 const app = new PWAPlugin({
   // name of app, will be used in <title> tag and webmanifest
@@ -75,6 +102,11 @@ const app = new PWAPlugin({
 })
 ```
 
+#### Example
+
+[Marker](https://github.com/firien/marker)
+
+---
 
 ### Development notes
 
