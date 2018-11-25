@@ -20,6 +20,7 @@ Assumes the following directory structure
     ┣ images/
     ┃ ┣ icon-192.png
     ┃ ┗ icon-512.png
+    ┣ favicon.ico (optional)
     ┗ views/
        ┗ index.pug
 
@@ -42,12 +43,6 @@ All pug files will be rendered to html
 * theme
 * name
 * desc
-
-Plugin will build three files associated with PWA.
-
-* pwa.js - load service worker and handle installation
-* service.js - all files will be cached
-* manifest.webmanifest
 
 `views/index.pug` head tag should look something like this:
 
@@ -75,11 +70,19 @@ html(lang="en")
     link(rel="manifest", href="manifest.webmanifest")
 ```
 
+Plugin will build three files associated with PWA.
+
+* pwa.js - load service worker and handle installation
+* service.js - all files will be cached
+* manifest.webmanifest
+
 Usage
 
 Install from GitHub
 
     npm install firien/gh-pwa
+
+Use the same command to update package, I don't think `npm update` will fetch GitHub changes.
 
 In webpack.config.js
 
@@ -102,6 +105,7 @@ const app = new PWAPlugin({
 
   // must manually match webpack mode
   // https://github.com/webpack/webpack/issues/6496
+  // must use NODE_ENV=production to build proper service worker
   mode: 'development'
 })
 ```
