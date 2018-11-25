@@ -79,7 +79,7 @@ Usage
 
 Install from GitHub
 
-    npm install firien/pwa
+    npm install firien/gh-pwa
 
 In webpack.config.js
 
@@ -114,7 +114,7 @@ const app = new PWAPlugin({
 ### Development notes
 
     npm link
-    npm link pwa #in other project
+    npm link gh-pwa #in other project
 
 Continuously build index.coffee
 
