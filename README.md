@@ -58,11 +58,11 @@ Usage
 
 ```js
 const app = new PWAPlugin({
-  name: 'Marker',# name of app, will be used in <title> tag and webmanifest
-  scope: 'marker',# GitHub "root" directory, typically the name of the repo
-  description: "Markdown Notepad",# description of app, will be used in <meta name=description> tag and webmanifest
-  theme: '#fffff0',# theme of app, will be used in <meta name=theme-color> tag and webmanifest
-  tag: 2# used for cache name, should change on each deployment
+  name: 'Marker',// name of app, will be used in <title> tag and webmanifest
+  scope: 'marker',// GitHub "root" directory, typically the name of the repo
+  description: "Markdown Notepad",// description of app, will be used in <meta name=description> tag and webmanifest
+  theme: '#fffff0',// theme of app, will be used in <meta name=theme-color> tag and webmanifest
+  tag: 2// used for cache name, should change on each deployment
 })
 ```
 
@@ -79,4 +79,3 @@ Continuously build index.coffee
 ## TODO
 
 * webpack dev server mimic GitHubs folder
-* --watch option does not pickup changes

@@ -87,10 +87,10 @@ PWAPlugin = class PWAPlugin {
   }
 
   // renders Pug files in /views/ to html
-  renderViews(assets) {
+  renderViews(compilation) {
     var assetKeys, assetPath, desc, iconLinks, locals, name, pwa, theme;
     pwa = this;
-    assetKeys = Object.keys(assets);
+    assetKeys = Object.keys(compilation.assets);
     // =================== start local pug definitions
     assetPath = function(_path) {
       var basename, extname, foundAsset, regex;
@@ -113,7 +113,7 @@ PWAPlugin = class PWAPlugin {
       return assetKeys.map(function(asset) {
         var png;
         if (regex.test(asset)) {
-          png = UPNG.decode(assets[asset].source());
+          png = UPNG.decode(compilation.assets[asset].source());
           return {
             rel: 'apple-touch-icon',
             sizes: `${png.width}x${png.height}`,
@@ -141,10 +141,13 @@ PWAPlugin = class PWAPlugin {
     };
     // =================== end local pug definitions
     return fs.readdirSync('./views').map(function(fileName) {
-      var html, newFileName;
+      var filePath, html, newFileName;
       if (/\.pug/.test(fileName)) {
-        html = pug.renderFile(`views/${fileName}`, locals);
+        filePath = path.resolve('./views', fileName);
+        html = pug.renderFile(filePath, locals);
         newFileName = fileName.replace(/pug$/, 'html');
+        // add dependencies
+        compilation.fileDependencies.add(filePath);
         return {
           name: newFileName,
           source: html,
@@ -156,11 +159,13 @@ PWAPlugin = class PWAPlugin {
 
   // transpiles Coffee files in /javascripts/ to js
   // directly copies plain js
-  transpileCoffee() {
+  transpileCoffee(compilation) {
     return fs.readdirSync('./javascripts').map(function(fileName) {
-      var cs, fileNamePath, hash, js, newFileName, source;
+      var cs, filePath, hash, js, newFileName, source;
+      filePath = path.resolve('./javascripts', fileName);
       if (/\.coffee$/.test(fileName)) {
-        cs = fs.readFileSync(`javascripts/${fileName}`, 'utf8');
+        compilation.fileDependencies.add(filePath);
+        cs = fs.readFileSync(filePath, 'utf8');
         js = coffee.compile(cs);
         hash = hashString(js);
         newFileName = fileName.replace(/\.coffee$/, `.${hash}.js`);
@@ -170,8 +175,8 @@ PWAPlugin = class PWAPlugin {
           size: js.length
         };
       } else if (/\.js$/.test(fileName)) {
-        fileNamePath = path.join(path.resolve('./javascripts'), fileName);
-        source = fs.readFileSync(fileNamePath);
+        compilation.fileDependencies.add(filePath);
+        source = fs.readFileSync(filePath);
         hash = hashString(source);
         js = source.toString();
         newFileName = fileName.replace(/\.js$/, `.${hash}.js`);
@@ -186,12 +191,14 @@ PWAPlugin = class PWAPlugin {
 
   // transpiles SASS files in /stylesheets/ to css
   // directly copies plain css
-  transpileSass() {
+  transpileSass(compilation) {
     return fs.readdirSync('./stylesheets').map(function(fileName) {
-      var css, fileNamePath, hash, newFileName, result, source;
+      var css, filePath, hash, newFileName, result, source;
+      filePath = path.resolve('./stylesheets', fileName);
       if (/\.scss/.test(fileName)) {
+        compilation.fileDependencies.add(filePath);
         result = sass.renderSync({
-          file: `stylesheets/${fileName}`
+          file: filePath
         });
         css = result.css.toString();
         hash = hashString(css);
@@ -202,8 +209,8 @@ PWAPlugin = class PWAPlugin {
           size: css.length
         };
       } else if (/\.css$/.test(fileName)) {
-        fileNamePath = path.join(path.resolve('./stylesheets'), fileName);
-        source = fs.readFileSync(fileNamePath);
+        compilation.fileDependencies.add(filePath);
+        source = fs.readFileSync(filePath);
         hash = hashString(source);
         css = source.toString();
         newFileName = fileName.replace(/\.css$/, `.${hash}.css`);
@@ -216,13 +223,14 @@ PWAPlugin = class PWAPlugin {
     }).filter(compactor);
   }
 
-  copyImages() {
+  copyImages(compilation) {
     return fs.readdirSync('./images').map(function(fileName) {
-      var extname, fileNamePath, hash, imageData, newFileName, regexp;
+      var extname, filePath, hash, imageData, newFileName, regexp;
       extname = path.extname(fileName);
       if (/png/i.test(extname)) {
-        fileNamePath = path.join(path.resolve('./images'), fileName);
-        imageData = fs.readFileSync(fileNamePath);
+        filePath = path.resolve('./images', fileName);
+        compilation.fileDependencies.add(filePath);
+        imageData = fs.readFileSync(filePath);
         hash = hashString(imageData);
         regexp = new RegExp(`\\${extname}$`);
         newFileName = fileName.replace(regexp, `.${hash}${extname}`);
@@ -235,7 +243,7 @@ PWAPlugin = class PWAPlugin {
     }).filter(compactor);
   }
 
-  webManifest(assets) {
+  generateManifest(assets) {
     var assetKeys, manifest, regex, str;
     assetKeys = Object.keys(assets);
     manifest = {
@@ -282,12 +290,12 @@ PWAPlugin = class PWAPlugin {
           }
         };
       };
-      pwa.transpileCoffee().forEach(addAsset);
-      pwa.transpileSass().forEach(addAsset);
-      pwa.copyImages().forEach(addAsset);
+      pwa.transpileCoffee(compilation).forEach(addAsset);
+      pwa.transpileSass(compilation).forEach(addAsset);
+      pwa.copyImages(compilation).forEach(addAsset);
       addAsset(pwa.generatePWA());
-      addAsset(pwa.webManifest(compilation.assets));
-      pwa.renderViews(compilation.assets).forEach(addAsset);
+      addAsset(pwa.generateManifest(compilation.assets));
+      pwa.renderViews(compilation).forEach(addAsset);
       addAsset(pwa.generateServiceWorker(compilation.assets));
       try {
         // copy favicon; do not register with webpack
