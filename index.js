@@ -42,10 +42,15 @@ PWAPlugin = class PWAPlugin {
   }
 
   generatePWA() {
-    var hash, js, newFileName, str, templatePath;
+    var hash, js, newFileName, scope, str, templatePath;
     templatePath = path.join(__dirname, 'templates/pwa.coffee.ejs');
+    if (this.options.mode === 'production') {
+      scope = `${this.options.scope}/`;
+    } else {
+      scope = '';
+    }
     str = renderSync(templatePath, {
-      scope: this.options.scope
+      scope: scope
     });
     js = coffee.compile(str);
     hash = hashString(js);
@@ -59,10 +64,15 @@ PWAPlugin = class PWAPlugin {
 
   generateServiceWorker(assets) {
     var assetKeys, js, locals, str, templatePath;
-    assetKeys = Object.keys(assets).map(function(asset) {
-      return `/${this.options.scope}/${asset}`;
-    }, this);
-    assetKeys.push(`/${this.options.scope}/`);
+    if (this.options.mode === 'production') {
+      assetKeys = Object.keys(assets).map(function(asset) {
+        return `/${this.options.scope}/${asset}`;
+      }, this);
+      assetKeys.push(`/${this.options.scope}/`);
+    } else {
+      assetKeys = Object.keys(assets);
+      assetKeys.push('/');
+    }
     templatePath = path.join(__dirname, 'templates/service.coffee.ejs');
     locals = {
       tag: this.options.tag,

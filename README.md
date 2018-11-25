@@ -87,18 +87,21 @@ In webpack.config.js
 const app = new PWAPlugin({
   // name of app, will be used in <title> tag and webmanifest
   name: 'Marker',
-  
+
   // GitHub "root" directory, typically the name of the repo
   scope: 'marker',
-  
+
   // description of app, will be used in <meta name=description> tag and webmanifest
   description: "Markdown Notepad",
-  
+
   // theme of app, will be used in <meta name=theme-color> tag and webmanifest
   theme: '#fffff0',
 
   // used for cache name, should change on each deployment
   tag: 2
+
+  //mode
+  mode: 'development'
 })
 ```
 
@@ -116,7 +119,3 @@ const app = new PWAPlugin({
 Continuously build index.coffee
 
     npx coffee -bcw index.coffee
-
-## TODO
-
-* webpack dev server mimic GitHubs folder

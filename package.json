@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "pwa",
+  "name": "gh-pwa",
   "version": "1.0.0",
   "description": "PWA static site generator",
   "main": "index.js",
