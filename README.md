@@ -35,7 +35,7 @@ All images/icon-*.png will be used as icon listings in `manifest.webmanifest` an
 #### Views
 All pug files will be rendered to html
 
-##### Helpers
+##### Pug Helpers
 
 * assetPath
 * iconLinks
@@ -98,7 +98,7 @@ const app = new PWAPlugin({
   theme: '#fffff0',
 
   // used for cache name, should change on each deployment
-  tag: 2
+  tag: 2,
 
   // must manually match webpack mode
   // https://github.com/webpack/webpack/issues/6496

@@ -15,12 +15,13 @@ self.addEventListener('install', (event) ->
 )
 
 clearPreviousCaches = ->
-  keys = await caches.keys()
-  Promise.all(keys.filter((key) ->
-    key != $cacheName and key.startsWith($prefix)
-  ).map((key) ->
-    caches.delete(key)
-  ))
+  caches.keys().then((keys) ->
+    Promise.all(keys.filter((key) ->
+      (key != $cacheName) && key.startsWith($prefix)
+    ).map((key) ->
+      caches.delete(key)
+    ))
+  )
 
 self.addEventListener('activate', (event) ->
   event.waitUntil(clearPreviousCaches)
