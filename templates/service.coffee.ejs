@@ -24,7 +24,7 @@ clearPreviousCaches = ->
   )
 
 self.addEventListener('activate', (event) ->
-  event.waitUntil(clearPreviousCaches)
+  event.waitUntil(clearPreviousCaches())
 )
 
 self.addEventListener('fetch', (event) ->
