@@ -105,7 +105,7 @@ PWAPlugin = class PWAPlugin {
       if (foundAsset) {
         return foundAsset;
       } else {
-        throw 'could not find';
+        throw `could not find ${_path}`;
       }
     };
     // generate <links> for icon-*.png
@@ -226,23 +226,27 @@ PWAPlugin = class PWAPlugin {
   }
 
   copyImages(compilation) {
-    return fs.readdirSync('./images').map(function(fileName) {
-      var extname, filePath, hash, imageData, newFileName, regexp;
-      extname = path.extname(fileName);
-      if (/png/i.test(extname)) {
-        filePath = path.resolve('./images', fileName);
-        compilation.fileDependencies.add(filePath);
-        imageData = fs.readFileSync(filePath);
-        hash = hashString(imageData);
-        regexp = new RegExp(`\\${extname}$`);
-        newFileName = fileName.replace(regexp, `.${hash}${extname}`);
-        return {
-          name: `images/${newFileName}`,
-          source: imageData,
-          size: imageData.length
-        };
-      }
-    }).filter(compactor);
+    if (fs.existsSync('./images')) {
+      return fs.readdirSync('./images').map(function(fileName) {
+        var extname, filePath, hash, imageData, newFileName, regexp;
+        extname = path.extname(fileName);
+        if (/png/i.test(extname)) {
+          filePath = path.resolve('./images', fileName);
+          compilation.fileDependencies.add(filePath);
+          imageData = fs.readFileSync(filePath);
+          hash = hashString(imageData);
+          regexp = new RegExp(`\\${extname}$`);
+          newFileName = fileName.replace(regexp, `.${hash}${extname}`);
+          return {
+            name: `images/${newFileName}`,
+            source: imageData,
+            size: imageData.length
+          };
+        }
+      }).filter(compactor);
+    } else {
+      return [];
+    }
   }
 
   generateManifest(assets) {
