@@ -90,7 +90,7 @@ PWAPlugin = class PWAPlugin {
 
   // renders Pug files in /views/ to html
   renderViews(compilation) {
-    var assetKeys, assetPath, desc, iconLinks, locals, name, pwa, theme;
+    var assetKeys, assetPath, desc, iconLinks, locals, name, pwa, scriptAttributes, theme;
     pwa = this;
     assetKeys = Object.keys(compilation.assets);
     // =================== start local pug definitions
@@ -107,6 +107,17 @@ PWAPlugin = class PWAPlugin {
       } else {
         throw `could not find ${_path}`;
       }
+    };
+    // include sha256 integrity attribute
+    scriptAttributes = function(_path) {
+      var _asset, sha256;
+      _path = assetPath(_path);
+      _asset = compilation.assets[_path];
+      sha256 = crypto.createHash('sha256').update(_asset.source()).digest('base64');
+      return {
+        src: _path,
+        integrity: `sha256-${sha256}`
+      };
     };
     // generate <links> for icon-*.png
     iconLinks = function() {
@@ -135,6 +146,7 @@ PWAPlugin = class PWAPlugin {
     }).bind(this);
     locals = {
       assetPath,
+      scriptAttributes,
       iconLinks,
       theme,
       desc,
@@ -162,7 +174,8 @@ PWAPlugin = class PWAPlugin {
   // transpiles Coffee files in /javascripts/ to js
   // directly copies plain js
   transpileCoffee(compilation) {
-    return fs.readdirSync('./javascripts').map(function(fileName) {
+    var javascripts, mapper, regex;
+    javascripts = fs.readdirSync('./javascripts').map(function(fileName) {
       var cs, filePath, hash, js, newFileName, source;
       filePath = path.resolve('./javascripts', fileName);
       if (/\.coffee$/.test(fileName)) {
@@ -174,7 +187,8 @@ PWAPlugin = class PWAPlugin {
         return {
           name: `javascripts/${newFileName}`,
           source: js,
-          size: js.length
+          size: js.length,
+          originalName: fileName.replace('.coffee', '')
         };
       } else if (/\.js$/.test(fileName)) {
         compilation.fileDependencies.add(filePath);
@@ -185,10 +199,28 @@ PWAPlugin = class PWAPlugin {
         return {
           name: `javascripts/${newFileName}`,
           source: js,
-          size: js.length
+          size: js.length,
+          originalName: fileName.replace('.js', '')
         };
       }
     }).filter(compactor);
+    // another pass to check for internal references
+    regex = /__(\w+)__/ig;
+    mapper = javascripts.reduce(function(h, file) {
+      h[file.originalName] = file.name;
+      return h;
+    }, {});
+    return javascripts.map(function(file) {
+      var hash, newFileName;
+      file.source = file.source.replace(regex, function(m, asset) {
+        return mapper[asset];
+      });
+      hash = hashString(file.source);
+      file.size = file.source.length;
+      newFileName = `${file.originalName}.${hash}.js`;
+      file.name = `javascripts/${newFileName}`;
+      return file;
+    });
   }
 
   // transpiles SASS files in /stylesheets/ to css
