@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "gh-pwa",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "PWA static site generator",
   "main": "index.js",
   "author": "firien",
