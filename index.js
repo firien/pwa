@@ -90,7 +90,7 @@ PWAPlugin = class PWAPlugin {
 
   // renders Pug files in /views/ to html
   renderViews(compilation) {
-    var assetKeys, assetPath, desc, iconLinks, locals, name, pwa, theme;
+    var assetKeys, assetPath, desc, iconLinks, locals, name, pwa, scriptAttributes, theme;
     pwa = this;
     assetKeys = Object.keys(compilation.assets);
     // =================== start local pug definitions
@@ -107,6 +107,17 @@ PWAPlugin = class PWAPlugin {
       } else {
         throw `could not find ${_path}`;
       }
+    };
+    // include sha256 integrity attribute
+    scriptAttributes = function(_path) {
+      var _asset, sha256;
+      _path = assetPath(_path);
+      _asset = compilation.assets[_path];
+      sha256 = crypto.createHash('sha256').update(_asset.source()).digest('base64');
+      return {
+        src: _path,
+        integrity: `sha256-${sha256}`
+      };
     };
     // generate <links> for icon-*.png
     iconLinks = function() {
@@ -135,6 +146,7 @@ PWAPlugin = class PWAPlugin {
     }).bind(this);
     locals = {
       assetPath,
+      scriptAttributes,
       iconLinks,
       theme,
       desc,
