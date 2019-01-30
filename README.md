@@ -110,10 +110,11 @@ const app = new PWAPlugin({
 })
 ```
 
-#### Example
+#### Examples
 
 * [Marker](https://github.com/firien/marker)
 * [Sconce](https://github.com/firien/sconce)
+* [WiFi-QR](https://github.com/firien/wifi-qr)
 
 ---
 
