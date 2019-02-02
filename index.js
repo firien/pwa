@@ -270,7 +270,7 @@ PWAPlugin = class PWAPlugin {
       start_url: '.',
       display: 'standalone',
       background_color: this.options.background_color || this.options.theme,
-      theme: this.options.theme,
+      theme_color: this.options.theme,
       description: this.options.description
     };
     regex = /icon-.*?\.png/i;
