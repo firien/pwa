@@ -269,7 +269,8 @@ PWAPlugin = class PWAPlugin {
       short_name: this.options.short_name || this.options.name,
       start_url: '.',
       display: 'standalone',
-      background_color: this.options.theme,
+      background_color: this.options.background_color || this.options.theme,
+      theme: this.options.theme,
       description: this.options.description
     };
     regex = /icon-.*?\.png/i;
