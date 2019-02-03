@@ -90,7 +90,7 @@ PWAPlugin = class PWAPlugin {
 
   // renders Pug files in /views/ to html
   renderViews(compilation) {
-    var assetKeys, assetPath, desc, iconLinks, locals, name, pwa, scriptAttributes, theme;
+    var assetKeys, assetPath, desc, iconLinks, locals, name, pwa, scriptAttributes, themeColor;
     pwa = this;
     assetKeys = Object.keys(compilation.assets);
     // =================== start local pug definitions
@@ -135,8 +135,8 @@ PWAPlugin = class PWAPlugin {
         }
       }).filter(compactor);
     };
-    theme = (function() {
-      return this.options.theme;
+    themeColor = (function() {
+      return this.options.theme_color;
     }).bind(this);
     desc = (function() {
       return this.options.description;
@@ -148,7 +148,7 @@ PWAPlugin = class PWAPlugin {
       assetPath,
       scriptAttributes,
       iconLinks,
-      theme,
+      themeColor,
       desc,
       name,
       pretty: true
@@ -269,8 +269,8 @@ PWAPlugin = class PWAPlugin {
       short_name: this.options.short_name || this.options.name,
       start_url: '.',
       display: 'standalone',
-      background_color: this.options.background_color || this.options.theme,
-      theme_color: this.options.theme,
+      background_color: this.options.background_color || this.options.theme_color,
+      theme_color: this.options.theme_color,
       description: this.options.description
     };
     regex = /icon-.*?\.png/i;

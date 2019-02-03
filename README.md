@@ -39,8 +39,9 @@ All pug files will be rendered to html
 ##### Pug Helpers
 
 * assetPath
+* scriptAttributes
 * iconLinks
-* theme
+* themeColor
 * name
 * desc
 
@@ -53,13 +54,13 @@ html(lang="en")
     title=name()
     meta(charset="UTF-8")
     meta(name="Description" content=desc())
-    meta(name="theme-color" content=theme())
+    meta(name="theme-color" content=themeColor())
     meta(name="apple-mobile-web-app-capable" content="yes")
     meta(name="viewport" content="width=device-width, initial-scale=1")
     // scripts
-    script(src=assetPath('bundle.js'))
-    script(src=assetPath('pwa.js'))
-    script(src=assetPath('index.js'))
+    script&attributes(scriptAttributes('bundle.js'))
+    script&attributes(scriptAttributes('pwa.js'))
+    script&attributes(scriptAttributes('index.js'))
     // css
     link(rel='stylesheet' href=assetPath('index.css'))
     // icons
@@ -98,7 +99,10 @@ const app = new PWAPlugin({
   description: "Markdown Notepad",
 
   // theme of app, will be used in <meta name=theme-color> tag and webmanifest
-  theme: '#fffff0',
+  theme_color: '#fffff0',
+
+  // background color for webmanifest
+  background_color: '#fffff0',
 
   // used for cache name, should change on each deployment
   tag: 2,
