@@ -12,10 +12,10 @@ Assumes the following directory structure
 
     root
     ┣ stylesheets/
-    ┃ ┣ index.scss
+    ┃ ┣ index.css
     ┃ ┗ other.css
     ┣ javascripts/
-    ┃ ┣ index.coffee
+    ┃ ┣ index.js
     ┃ ┗ other.js
     ┣ images/
     ┃ ┣ icon-192.png
@@ -25,10 +25,10 @@ Assumes the following directory structure
        ┗ index.pug
 
 #### Stylesheets
-All sass files will be transpiled to css. All css files with be copied.
+All css files with be copied.
 
 #### Javascripts
-All coffee files will be transpiled to js. All js files with be copied.
+All js files with be copied.
 
 #### Images
 All images/icon-*.png will be used as icon listings in `manifest.webmanifest` and as `<link rel=apple-touch-icon>`
@@ -127,6 +127,3 @@ const app = new PWAPlugin({
     npm link
     npm link gh-pwa #in other project
 
-Continuously build index.coffee
-
-    npx coffee -bcw index.coffee
